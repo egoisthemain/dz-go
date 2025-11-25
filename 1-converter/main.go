@@ -66,26 +66,22 @@ func getUserInfo() (string, float64, string) {
 func convert(money float64, origValue, targetValue string) float64 {
 	RubToUsd := 0.012
 	RubToEur := 0.011
-	switch origValue {
-	case "rub":
-		if targetValue == "usd" {
-			return money * RubToUsd
-		} else {
-			return money * RubToEur
-		}
-	case "usd":
-		if targetValue == "rub" {
-			return money / RubToUsd
-		} else {
-			return (money / RubToUsd) * RubToEur
-		}
-	case "eur":
-		if targetValue == "rub" {
-			return money / RubToEur
-		} else {
-			return (money / RubToEur) * RubToUsd
-		}
-	default:
-		return 0
+	ruConv := map[string]float64{
+		"usd": RubToUsd,
+		"eur": RubToEur,
 	}
+	usdConv := map[string]float64{
+		"rub": 1 / RubToUsd,
+		"eur": RubToEur / RubToUsd,
+	}
+	eurConv := map[string]float64{
+		"rub": 1 / RubToEur,
+		"usd": RubToUsd / RubToEur,
+	}
+	convMap := map[string]map[string]float64{
+		"rub": ruConv,
+		"usd": usdConv,
+		"eur": eurConv,
+	}
+	return money * convMap[origValue][targetValue]
 }
