@@ -4,10 +4,29 @@ import (
 	"fmt"
 )
 
+type conversionMap map[string]map[string]float64
+
 func main() {
+	RubToUsd := 0.012
+	RubToEur := 0.011
+
+	convMap := conversionMap{
+		"rub": map[string]float64{
+			"usd": RubToUsd,
+			"eur": RubToEur,
+		},
+		"usd": map[string]float64{
+			"rub": 1 / RubToUsd,
+			"eur": RubToEur / RubToUsd,
+		},
+		"eur": map[string]float64{
+			"rub": 1 / RubToEur,
+			"usd": RubToUsd / RubToEur,
+		},
+	}
 	origCurrency, origMoney, targetCurrency := getUserInfo()
 	//fmt.Printf("origCurrency = %s, origMoney = %.2f, targetCurrency = %s\n", origCurrency, origMoney, targetCurrency)
-	convertValue := convert(origMoney, origCurrency, targetCurrency)
+	convertValue := convert(origMoney, origCurrency, targetCurrency, &convMap)
 	fmt.Printf("%.2f %s = %.2f %s", origMoney, origCurrency, convertValue, targetCurrency)
 }
 
@@ -63,25 +82,6 @@ func getUserInfo() (string, float64, string) {
 	return origCurrency, money, targetCurrency
 }
 
-func convert(money float64, origValue, targetValue string) float64 {
-	RubToUsd := 0.012
-	RubToEur := 0.011
-	ruConv := map[string]float64{
-		"usd": RubToUsd,
-		"eur": RubToEur,
-	}
-	usdConv := map[string]float64{
-		"rub": 1 / RubToUsd,
-		"eur": RubToEur / RubToUsd,
-	}
-	eurConv := map[string]float64{
-		"rub": 1 / RubToEur,
-		"usd": RubToUsd / RubToEur,
-	}
-	convMap := map[string]map[string]float64{
-		"rub": ruConv,
-		"usd": usdConv,
-		"eur": eurConv,
-	}
-	return money * convMap[origValue][targetValue]
+func convert(money float64, origValue, targetValue string, convMap *conversionMap) float64 {
+	return money * (*convMap)[origValue][targetValue]
 }
