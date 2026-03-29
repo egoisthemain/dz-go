@@ -1,0 +1,3 @@
+module github.com/egoisthemain/3-bin
+
+go 1.25.1
