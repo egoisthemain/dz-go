@@ -7,8 +7,8 @@ import (
 	"github.com/egoisthemain/3-bin/bins"
 )
 
-func saveBin(bin bins.Bin, filename string) error {
-	file, err := os.Open(filename)
+func SaveBin(bin bins.Bin, filename string) error {
+	file, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
@@ -18,6 +18,9 @@ func saveBin(bin bins.Bin, filename string) error {
 		return err
 	}
 	err = os.WriteFile(filename, binBytes, 0644)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
