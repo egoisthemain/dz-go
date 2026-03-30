@@ -1,19 +1,20 @@
 package bins
 
 import (
+	"encoding/json"
 	"errors"
 	"time"
 )
 
 type Bin struct {
-	id        string
-	private   bool
-	createdAt time.Time
-	name      string
+	Id        string    `json:"id"`
+	Private   bool      `json:"private"`
+	CreatedAt time.Time `json:"createdAt"`
+	Name      string    `json:"name"`
 }
 
 type BinList struct {
-	bins []Bin
+	Bins []Bin `json:"bins"`
 }
 
 func newBin(id string, private bool, name string) (*Bin, error) {
@@ -24,17 +25,25 @@ func newBin(id string, private bool, name string) (*Bin, error) {
 		return nil, errors.New("wrong name")
 	}
 	bin := Bin{
-		id:        id,
-		private:   private,
-		createdAt: time.Now(),
-		name:      name,
+		Id:        id,
+		Private:   private,
+		CreatedAt: time.Now(),
+		Name:      name,
 	}
 	return &bin, nil
 }
 
 func newBinList(bin Bin) (*BinList, error) {
 	binList := BinList{
-		bins: []Bin{bin},
+		Bins: []Bin{bin},
 	}
 	return &binList, nil
+}
+
+func (bin *Bin) ToBytes() ([]byte, error) {
+	file, err := json.Marshal(bin)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
 }
